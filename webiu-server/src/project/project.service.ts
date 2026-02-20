@@ -1,5 +1,6 @@
 import {
   Injectable,
+  Logger,
   InternalServerErrorException,
   BadRequestException,
 } from '@nestjs/common';
@@ -10,6 +11,8 @@ const CACHE_TTL = 300; // 5 minutes
 
 @Injectable()
 export class ProjectService {
+  private readonly logger = new Logger(ProjectService.name);
+
   constructor(
     private githubService: GithubService,
     private cacheService: CacheService,
@@ -46,7 +49,7 @@ export class ProjectService {
       this.cacheService.set(cacheKey, result, CACHE_TTL);
       return result;
     } catch (error) {
-      console.error(
+      this.logger.error(
         'Error fetching repositories or pull requests:',
         error.response ? error.response.data : error.message,
       );
@@ -73,7 +76,7 @@ export class ProjectService {
       this.cacheService.set(cacheKey, result, CACHE_TTL);
       return result;
     } catch (error) {
-      console.error(
+      this.logger.error(
         'Error fetching issues and PRs:',
         error.response?.data || error.message,
       );
