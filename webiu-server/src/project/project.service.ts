@@ -64,7 +64,7 @@ export class ProjectService {
     try {
       const languages = await this.githubService.getRepoLanguages(repoName);
       const result = { languages };
-      this.cacheService.set(cacheKey, result, CACHE_TTL);
+      this.cacheService.set(cacheKey, result);
       return result;
     } catch (error) {
       console.error(

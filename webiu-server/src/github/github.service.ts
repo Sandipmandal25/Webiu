@@ -118,7 +118,7 @@ export class GithubService {
       { headers: this.headers },
     );
     const languages = Object.keys(response.data);
-    this.cacheService.set(cacheKey, languages, CACHE_TTL);
+    this.cacheService.set(cacheKey, languages);
     return languages;
   }
 
