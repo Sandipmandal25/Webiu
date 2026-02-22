@@ -29,6 +29,7 @@ export class ProjectsCardComponent implements OnInit {
   pullRequestCount = 0;
   initialized = false;
   languages: string[] = [];
+  techStackLoaded = false;
 
   private http = inject(HttpClient);
 
@@ -36,7 +37,6 @@ export class ProjectsCardComponent implements OnInit {
   ngOnInit(): void {
     if (!this.initialized) {
       this.fetchIssuesAndPRs();
-      this.fetchTechStack();
     }
   }
 
@@ -59,6 +59,7 @@ export class ProjectsCardComponent implements OnInit {
     this.http.get<{ languages: string[] }>(apiUrl).subscribe({
       next: (data) => {
         this.languages = data.languages ?? [];
+        this.techStackLoaded = true;
       },
       error: (error) => {
         console.error('Failed to fetch tech stack:', error);
@@ -70,6 +71,9 @@ export class ProjectsCardComponent implements OnInit {
 
   toggleDetails() {
     this.detailsVisible = !this.detailsVisible;
+    if (this.detailsVisible && !this.techStackLoaded) {
+      this.fetchTechStack();
+    }
   }
 
   get truncatedDescription(): string {
@@ -81,7 +85,7 @@ export class ProjectsCardComponent implements OnInit {
       : this.description;
   }
 
-  getLanguageColor(): string {
+  getLanguageColor(lang?: string): string {
     const languageColors: Record<string, string> = {
       Python: '#3572A5',
       JavaScript: '#F1E05A',
@@ -93,6 +97,6 @@ export class ProjectsCardComponent implements OnInit {
       Default: '#607466',
     };
 
-    return languageColors[this.language] || languageColors['Default'];
+    return languageColors[lang ?? this.language] || languageColors['Default'];
   }
 }
